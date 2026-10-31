@@ -1,15 +1,29 @@
 # SenseVoiceSmall API 服务
 
+多语言语音识别 HTTP API（中/英/日/韩/粤），SenseVoiceSmall int8 ONNX + sherpa-onnx + FastAPI，纯 CPU 推理，2-3 并发。
+
+## 快速开始（Docker）
+```bash
+git clone https://github.com/wangbhan/SenseVoiceSmall_deploy.git
+cd SenseVoiceSmall_deploy
+./download_model.sh                                        # 首次下载模型 229MB 到 ./models/
+echo "SV_API_TOKEN=$(openssl rand -hex 24)" > .env         # 生成 token
+docker compose up -d --build                               # 构建并起容器，端口 9820
+docker compose logs -f                                     # 观察日志
+curl -s http://127.0.0.1:9820/health
+```
+
+## 裸机部署（不用 Docker）
+```bash
+./download_model.sh
+./start.sh    # 启动 + 健康检查（依赖已装好 miniconda + sherpa-onnx + fastapi）
+./status.sh   # 查看状态、PID、内存
+./test.sh     # 冒烟测（默认用 test_zh.wav，可传自定义 wav）
+./stop.sh
+```
+
 ## 端口
 - **9820/tcp**（HTTP，绑定 0.0.0.0）
-
-## 一键启停（在 `/root/sensevoice/` 下）
-```bash
-./start.sh    # 启动 + 健康检查
-./stop.sh     # 优雅停止（10s 后强杀）
-./status.sh   # 查看状态、PID、内存、端口
-./test.sh     # 用 test_zh.wav 冒烟测；可传自定义 wav: ./test.sh /path/xxx.wav
-```
 
 ## 配置
 - 端口/线程等在 `config.sh`

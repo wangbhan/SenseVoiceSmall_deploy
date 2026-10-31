@@ -1,8 +1,13 @@
 logs/
-models/
 test_zh.wav
 README.md
 *.sh
 .git/
 __pycache__/
 *.pyc
+.env
+.env.example
+Dockerfile
+docker-compose.yml
+.dockerignore
+.gitignore
