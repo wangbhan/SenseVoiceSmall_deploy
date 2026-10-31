@@ -1,0 +1,8 @@
+logs/
+models/
+test_zh.wav
+README.md
+*.sh
+.git/
+__pycache__/
+*.pyc

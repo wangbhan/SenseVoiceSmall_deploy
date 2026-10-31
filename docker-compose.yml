@@ -1,0 +1,20 @@
+services:
+  sensevoice:
+    build: .
+    image: sensevoice-api:latest
+    container_name: sensevoice
+    restart: unless-stopped
+    ports:
+      - "9820:9820"
+    environment:
+      SV_PORT: "9820"
+      SV_NUM_THREADS: "4"
+      SV_MAX_SECONDS: "60"
+      SV_API_TOKEN: "${SV_API_TOKEN:?set SV_API_TOKEN in .env}"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "6.0"
+        reservations:
+          memory: 512M
