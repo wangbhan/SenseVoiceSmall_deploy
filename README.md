@@ -50,17 +50,29 @@ Body: `multipart/form-data`，字段名 `file`
 Query 参数：
 - `sample_rate`（默认 16000，仅在无 WAV header 时使用）
 
-成功响应 200：
+成功响应 200（含诊断时间戳 headers）：
 ```json
 {
-  "text": "欢迎大家来体验达摩院推出的语音识别模型。",
+  "text": "欢迎大家来体验达摩院推出的语音合成模型。",
   "language": "zh",
   "emotion": "NEUTRAL",
   "event": "Speech",
   "duration": 5.547,
-  "infer_ms": 363.1
+  "upload_ms": 0.1,
+  "decode_ms": 0.4,
+  "infer_ms": 441.0,
+  "total_ms": 442.0
 }
 ```
+Headers：
+| Header | 说明 |
+|---|---|
+| `X-Upload-Ms` | 请求 body 上传耗时 |
+| `X-Decode-Ms` | WAV 解析+重采样 |
+| `X-Infer-Ms` | 模型推理 |
+| `X-Total-Ms` | 服务端处理总时长 |
+| `X-Request-Id` | 匹配服务端 log；客户端可通过同名请求头注入 |
+| `Server-Timing` | 标准格式，供网关/监控采集 |
 - `language`: zh / en / ja / ko / yue / auto
 - `emotion`: NEUTRAL / HAPPY / SAD / ANGRY / FEARED / DISGUSTED / SURPRISED / EMO_UNKNOWN
 - `event`: Speech / BGM / Applause / Laughter / Cry / Sneezle / Breathing / Coughing / Hum / Event_UNKNOWN
@@ -76,7 +88,10 @@ Query 参数：
 | 415 | WAV 采样位深不支持 |
 
 ### `GET /health`
-无鉴权。返回 `{"ok":true,"model":"SenseVoiceSmall-int8"}`。
+无鉴权。返回 `{"ok":true,"model":"SenseVoiceSmall-int8","supports_stream":false}`。
+
+### `GET /metrics/recent?limit=20`
+无鉴权。返回最近 100 次 ASR 请求的 timing 汇总（infer_ms p50/p95/avg + 明细），用于诊断和压测。
 
 ## curl 示例
 ```bash
